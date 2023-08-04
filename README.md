@@ -17,26 +17,38 @@ Once you are on the Remix website, create a new file by clicking on the "+" icon
 Save the file with a .sol extension (e.g., contract.sol). Copy and paste the following code into the file:
 
 ```
-// pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-contract salary {
+contract AssertionDemo {
+    uint256 public balance;
 
-    uint public totalsalaryrecived;
-    mapping(address => bool) public hassalarygiven;
+    function deposit(uint256 amount) public {
+        // Use require() to check for valid deposit amount
+        require(amount > 0, "Amount must be greater than zero");
 
-    function salarygiven() public {
-        require(!hassalarygiven[msg.sender], "Already Given"); 
+        // Use assert() to ensure no integer overflow occurs
+        uint256 newBalance = balance + amount;
+        assert(newBalance >= balance);
 
-        totalsalaryrecived++;
-        hassalarygiven[msg.sender] = true;
+        // Perform the deposit
+        balance = newBalance;
+    }
 
-        if (totalsalaryrecived > 50) {
-            revert("employee limit exceeded"); 
+    function withdraw(uint256 amount) public {
+        // Use require() to check if the contract has enough balance for withdrawal
+        require(amount <= balance, "Insufficient balance");
+
+        // Use revert() to revert the transaction if the withdrawal amount is negative
+        if (amount < 0) {
+            revert("Invalid withdrawal amount");
         }
 
-        assert(totalsalaryrecived <= 50); 
+        // Perform the withdrawal
+        balance -= amount;
     }
 }
+
 ```
 To compile the code, click on the "Solidity Compiler" tab in the left-hand sidebar.
 
